@@ -1,0 +1,124 @@
+{
+  "contacts": [
+    {
+      "id": "mp9txl7bdzu2kg",
+      "read": false,
+      "createdAt": "2026-05-17T13:47:20.088Z",
+      "name": "Siviwe",
+      "email": "hello@por.problaq.co.za",
+      "subject": "Hello from tests",
+      "message": "This is a test message"
+    },
+    {
+      "id": "mp9tug4yhxuo6h",
+      "read": false,
+      "createdAt": "2026-05-17T13:44:53.554Z",
+      "name": "Siviwe",
+      "email": "hello@por.problaq.co.za",
+      "subject": "Hello",
+      "message": "Test"
+    }
+  ],
+  "projects": [
+    {
+      "id": "cerb-church",
+      "title": "Cerb Church",
+      "slug": "cerb-church",
+      "description": "Full church website with sermon archives, events, and community tools. Built to serve a congregation online with accessibility and warmth at its core.",
+      "url": "https://cerb.church",
+      "tags": [
+        "Church Platform",
+        "CMS",
+        "WordPress"
+      ],
+      "badge": "live",
+      "span": "span8",
+      "featured": true,
+      "order": 1,
+      "createdAt": "2025-01-01"
+    },
+    {
+      "id": "luxesutia",
+      "title": "Luxesutia",
+      "slug": "luxesutia",
+      "description": "Premium South African brand website. Refined, aspirational design built to convert high-end clientele.",
+      "url": "https://luxesutia.co.za",
+      "tags": [
+        "Luxury",
+        "E-Commerce",
+        "SA Brand"
+      ],
+      "badge": "live",
+      "span": "span4",
+      "featured": false,
+      "order": 2,
+      "createdAt": "2025-01-02"
+    },
+    {
+      "id": "graced-living",
+      "title": "Graced Living Events",
+      "slug": "graced-living",
+      "description": "Event planning and booking platform for a lifestyle brand. Clean layouts with enquiry and portfolio sections.",
+      "url": "https://gracedlivingevents.com",
+      "tags": [
+        "Events",
+        "Booking",
+        "WordPress"
+      ],
+      "badge": "live",
+      "span": "span6",
+      "featured": false,
+      "order": 3,
+      "createdAt": "2025-01-03"
+    },
+    {
+      "id": "problaq-co",
+      "title": "Problaq Co.",
+      "slug": "problaq-co",
+      "description": "Your own company's digital home. Showcasing your brand identity and services to the South African market.",
+      "url": "https://problaq.co.za",
+      "tags": [
+        "Own Brand",
+        "Corporate",
+        "SA"
+      ],
+      "badge": "live",
+      "span": "span6",
+      "featured": false,
+      "order": 4,
+      "createdAt": "2025-01-04"
+    },
+    {
+      "id": "coregame",
+      "title": "CoreGame",
+      "slug": "coregame",
+      "description": "An interactive browser-based game deployed on Netlify. Fast, lightweight, and built for fun.",
+      "url": "https://coregame1.netlify.app",
+      "tags": [
+        "Gaming",
+        "Netlify",
+        "Interactive",
+        "JavaScript"
+      ],
+      "badge": "live",
+      "span": "span12",
+      "featured": true,
+      "stats": [
+        {
+          "label": "Replay value",
+          "value": "∞"
+        },
+        {
+          "label": "Vanilla",
+          "value": "JS"
+        },
+        {
+          "label": "Load lag",
+          "value": "0ms"
+        }
+      ],
+      "order": 5,
+      "createdAt": "2025-01-05"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "problaq-studio",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "env-cmd -f frontend/.env -f backend/.env concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "preview": "cd frontend && npm run preview",
+    "start": "cd backend && npm start",
+    "lint": "cd frontend && npx eslint src/",
+    "typecheck": "cd frontend && npx tsc --noEmit 2>&1 || true"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "env-cmd": "^11.0.0"
+  }
+}

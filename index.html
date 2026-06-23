@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Problaq Studio — Web Developer Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf8f5;
+    --surface: #ffffff;
+    --surface2: #f0ece4;
+    --white: #0f172a;
+    --muted: #64748b;
+    --accent: #1d4ed8;
+    --accent-bright: #2563eb;
+    --accent-glow: rgba(37,99,235,0.20);
+    --gold: #ea580c;
+    --border: rgba(15,23,42,0.08);
+    --border-bright: rgba(15,23,42,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor { position: fixed; width: 10px; height: 10px; background: var(--accent-bright); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: transform 0.1s, background 0.2s; mix-blend-mode: screen; }
+  .cursor-ring { position: fixed; width: 36px; height: 36px; border: 1px solid rgba(37,99,235,0.35); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: all 0.35s ease; }
+  .cursor.big { transform: translate(-50%,-50%) scale(3); background: var(--accent); }
+  .cursor-ring.big { width: 60px; height: 60px; border-color: rgba(37,99,235,0.15); }
+
+  /* BG GRID */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NOISE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.25rem 2.5rem;
+    background: rgba(250,248,245,0.90);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    display: flex; align-items: center; gap: 0.75rem;
+    text-decoration: none;
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    display: grid; place-items: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: white;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--white);
+    letter-spacing: 0.05em;
+  }
+  .logo-text span { color: var(--accent-bright); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-hire {
+    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 0.55rem 1.25rem;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent-bright);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .nav-hire:hover { background: var(--accent); color: white; box-shadow: 0 4px 20px var(--accent-glow); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 10rem 2.5rem 5rem;
+    position: relative; overflow: hidden;
+    z-index: 2;
+  }
+  .hero-orb {
+    position: absolute;
+    top: -20%; right: -10%;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(37,99,235,0.1) 0%, transparent 70%);
+    pointer-events: none;
+    animation: orbPulse 6s ease-in-out infinite;
+  }
+  .hero-orb2 {
+    position: absolute;
+    bottom: -30%; left: -15%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(232,93,38,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    animation: orbPulse 8s ease-in-out infinite reverse;
+  }
+  @keyframes orbPulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    border: 1px solid var(--border-bright);
+    padding: 0.45rem 1rem;
+    width: fit-content;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.7s 0.1s both;
+  }
+  .badge-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); } 50% { box-shadow: 0 0 0 5px rgba(34,197,94,0); } }
+  .badge-text { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+
+  .hero-eyebrow {
+    font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--accent-bright); margin-bottom: 1rem;
+    animation: fadeUp 0.7s 0.2s both;
+  }
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3.5rem, 8vw, 7.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    animation: fadeUp 0.7s 0.3s both;
+  }
+  .hero-title .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent-bright), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 0.7rem; line-height: 2; color: var(--muted);
+    max-width: 50ch;
+    animation: fadeUp 0.7s 0.45s both;
+  }
+
+  .hero-row {
+    display: flex; align-items: center; gap: 2rem;
+    margin-top: 3.5rem;
+    animation: fadeUp 0.7s 0.6s both;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 0.75rem;
+    padding: 0.85rem 2rem;
+    background: var(--accent);
+    color: white; text-decoration: none;
+    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all 0.25s;
+  }
+  .hero-cta:hover { background: var(--accent-bright); box-shadow: 0 6px 24px var(--accent-glow); transform: translateY(-2px); }
+  .hero-cta-ghost {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .hero-cta-ghost:hover { color: var(--accent); }
+
+  .hero-stats {
+    display: flex; gap: 3rem;
+    margin-top: 5rem; padding-top: 3rem;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.7s 0.75s both;
+  }
+  .hstat-num { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--white); }
+  .hstat-num span { color: var(--accent-bright); }
+  .hstat-label { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 0.25rem; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* MARQUEE */
+  .marquee-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 0.85rem 0; overflow: hidden; z-index: 2; position: relative; background: var(--white); }
+  .marquee-track { display: flex; gap: 3rem; animation: marquee 22s linear infinite; white-space: nowrap; }
+  .marquee-item { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.45); flex-shrink: 0; }
+  .marquee-item.hi { color: #ffffff; font-weight: 600; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* SECTION */
+  .section { padding: 7rem 2.5rem; position: relative; z-index: 2; }
+  .sec-head { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 4rem; }
+  .sec-num { font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent-bright); }
+  .sec-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(2rem,4vw,3.5rem); line-height: 1; }
+  .sec-line { flex: 1; height: 1px; background: var(--border); margin-bottom: 0.3rem; }
+
+  /* NAME SUGGESTIONS */
+  .names-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .names-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--border); }
+  .name-card {
+    background: var(--surface2);
+    padding: 2.5rem;
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+    cursor: none;
+  }
+  .name-card:hover { background: #e9e4db; }
+  .name-card.featured { border: 1px solid var(--accent); background: rgba(37,99,235,0.04); }
+  .name-card.featured::before {
+    content: '★ RECOMMENDED';
+    position: absolute; top: 1rem; right: 1rem;
+    font-size: 0.45rem; letter-spacing: 0.2em;
+    color: var(--accent-bright); background: rgba(37,99,235,0.1);
+    padding: 0.25rem 0.6rem;
+  }
+  .name-big { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem; color: var(--white); margin-bottom: 0.5rem; }
+  .name-domain { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--accent-bright); margin-bottom: 1rem; }
+  .name-why { font-size: 0.62rem; line-height: 1.9; color: var(--muted); }
+  .name-vibe {
+    display: inline-block; margin-top: 1rem;
+    font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 0.25rem 0.7rem; border: 1px solid var(--border-bright);
+    color: var(--muted);
+  }
+
+  /* PROJECTS */
+  .projects-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; background: var(--border); }
+
+  .proj {
+    position: relative; overflow: hidden;
+    background: var(--surface);
+    transition: background 0.3s;
+    cursor: none;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 2rem;
+    min-height: 340px;
+  }
+  .proj:hover { background: #e9e4db; }
+  .proj.span8 { grid-column: span 8; }
+  .proj.span4 { grid-column: span 4; }
+  .proj.span6 { grid-column: span 6; }
+  .proj.span12 { grid-column: span 12; min-height: 220px; flex-direction: row; align-items: center; justify-content: space-between; gap: 3rem; }
+
+  .proj-num {
+    position: absolute; top: 1.5rem; left: 2rem;
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 3.5rem; color: rgba(17,24,39,0.05);
+    line-height: 1; user-select: none;
+    transition: color 0.3s;
+  }
+  .proj:hover .proj-num { color: rgba(37,99,235,0.1); }
+
+  .proj-badge {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    font-size: 0.45rem; letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+  }
+  .proj-badge.live { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+  .proj-badge.wip { background: rgba(234,88,12,0.10); color: var(--gold); border: 1px solid rgba(234,88,12,0.22); }
+
+  .proj-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .ptag { font-size: 0.48rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.2rem 0.6rem; border: 1px solid var(--border-bright); color: var(--muted); }
+  .ptag.hi { border-color: rgba(37,99,235,0.3); color: var(--accent-bright); }
+
+  .proj-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; line-height: 1.25; margin-bottom: 0.6rem; }
+  .proj-url {
+    font-size: 0.55rem; letter-spacing: 0.1em;
+    color: var(--accent-bright); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    transition: opacity 0.2s;
+    margin-top: 0.5rem;
+  }
+  .proj-url:hover { opacity: 0.7; }
+  .proj-desc { font-size: 0.6rem; line-height: 1.85; color: var(--muted); max-width: 38ch; margin-top: 0.5rem; }
+
+  /* wide proj layout */
+  .proj-wide-left {}
+  .proj-wide-right { display: flex; gap: 2rem; flex-shrink: 0; align-items: center; }
+  .proj-stat { text-align: center; }
+  .proj-stat-val { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--accent-bright); }
+  .proj-stat-label { font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 0.2rem; }
+
+  /* BOOKING */
+  .pending-list { display: flex; flex-direction: column; }
+  .pend {
+    display: grid; grid-template-columns: 64px 1fr auto max-content;
+    align-items: center; gap: 2rem;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .pend::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: rgba(37,99,235,0.04); transition: width 0.5s; }
+  .pend:hover::before { width: 100%; }
+  .pend-n { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--border-bright); }
+  .pend-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; }
+  .pend-sub { font-size: 0.55rem; letter-spacing: 0.1em; color: var(--muted); margin-top: 0.3rem; font-style: normal; font-family: 'JetBrains Mono', monospace; }
+  .pend-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: flex-end; }
+  .pchip { font-size: 0.48rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.6rem; border: 1px solid var(--border); color: var(--muted); border-radius: 100px; }
+  .pend-status {
+    font-size: 0.52rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+    border: 1px solid rgba(37,99,235,0.25);
+    padding: 0.45rem 0.75rem;
+    background: rgba(37,99,235,0.05);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* SKILLS */
+  .skills-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
+  .skill-cell { background: var(--surface); padding: 2.5rem; transition: background 0.3s; }
+  .skill-cell:hover { background: #e9e4db; }
+  .skill-icon { font-size: 1.2rem; margin-bottom: 1.2rem; }
+  .skill-cat { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 1rem; }
+  .skill-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .spill { font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.25rem 0.65rem; border: 1px solid var(--border-bright); color: var(--muted); transition: all 0.2s; }
+  .skill-cell:hover .spill { border-color: rgba(37,99,235,0.3); color: var(--accent-bright); }
+
+  /* CONTACT */
+  .contact-section {
+    padding: 8rem 2.5rem; text-align: center;
+    background: var(--surface2); position: relative; overflow: hidden; z-index: 2;
+    border-top: 1px solid var(--border);
+  }
+  .contact-orb {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(37,99,235,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .contact-pre { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent-bright); margin-bottom: 1.5rem; }
+  .contact-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 8vw, 7rem); line-height: 0.95; color: var(--white); }
+  .contact-title em { font-style: italic; font-family: 'Playfair Display', serif; font-weight: 400; color: var(--gold); -webkit-text-fill-color: var(--gold); }
+  .contact-email { display: inline-block; margin-top: 3rem; font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(37,99,235,0.35); padding-bottom: 0.25rem; transition: border-color 0.2s, opacity 0.2s; }
+  .contact-email:hover { opacity: 0.75; border-color: var(--accent); }
+  .contact-socials { display: flex; justify-content: center; gap: 2rem; margin-top: 3rem; }
+  .c-soc { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .c-soc:hover { color: var(--accent-bright); }
+
+  /* FOOTER */
+  footer { padding: 1.75rem 2.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 2; position: relative; background: var(--surface); }
+  .footer-l { font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+  .footer-r { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--accent-bright); letter-spacing: 0.05em; }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(35px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 860px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { display: none; }
+    .hero { padding: 7rem 1.25rem 4rem; }
+    .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+    .section { padding: 4.5rem 1.25rem; }
+    .proj.span8, .proj.span4, .proj.span6 { grid-column: span 12; }
+    .proj.span12 { grid-column: span 12; flex-direction: column; align-items: flex-start; }
+    .skills-wrap { grid-template-columns: 1fr; }
+    .names-grid { grid-template-columns: 1fr; }
+    .pend { grid-template-columns: 1fr; gap: 0.5rem; }
+    .pend-n { display: none; }
+    .pend-chips { justify-content: flex-start; }
+    .pend-status { width: fit-content; margin-top: 0.25rem; }
+    footer { flex-direction: column; gap: 0.75rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="C"></div>
+<div class="cursor-ring" id="CR"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-mark">P</div>
+    <div class="logo-text">Problaq<span> Studio</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#names">Brand Name</a></li>
+    <li><a href="#work">Projects</a></li>
+    <li><a href="#pending">Now Booking</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#contact" class="nav-hire">Hire Me →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-orb"></div>
+  <div class="hero-orb2"></div>
+
+  <div class="hero-badge">
+    <div class="badge-dot"></div>
+    <span class="badge-text">Open to new projects &amp; freelance work</span>
+  </div>
+
+  <p class="hero-eyebrow">// Problaq Studio · Full-Stack Web Dev · South Africa</p>
+
+  <h1 class="hero-title">
+    Problaq<br>
+    <span class="line2">Studio.</span>
+  </h1>
+
+  <p class="hero-sub">I build websites and web apps that actually work — fast, clean, and built to grow. From church platforms to luxury brands, gaming sites to corporate portals. Based in SA, shipping globally.</p>
+
+  <div class="hero-row">
+    <a href="#work" class="hero-cta">View My Work →</a>
+    <a href="#contact" class="hero-cta-ghost">Get In Touch ↗</a>
+  </div>
+
+  <div class="hero-stats">
+    <div>
+      <div class="hstat-num">6<span>+</span></div>
+      <div class="hstat-label">Live Projects</div>
+    </div>
+    <div>
+      <div class="hstat-num">4<span>+</span></div>
+      <div class="hstat-label">Industries Served</div>
+    </div>
+    <div>
+      <div class="hstat-num">100<span>%</span></div>
+      <div class="hstat-label">Client Satisfaction</div>
+    </div>
+    <div>
+      <div class="hstat-num" style="font-size:1.3rem;">.com<span> &amp; more</span></div>
+      <div class="hstat-label">Domain Experience</div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item hi">Problaq Studio</span>
+    <span class="marquee-item">React</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item">HTML/CSS/JS</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item hi">South Africa</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item">WordPress</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item">Netlify</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item hi">Full Stack</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item">Node.js</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item">UI/UX</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item hi">Problaq Studio</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item">React</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item">HTML/CSS/JS</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item hi">South Africa</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item">WordPress</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item">Netlify</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item hi">Full Stack</span>
+    <span class="marquee-item">·</span>
+    <span class="marquee-item">Node.js</span>
+    <span class="marquee-item">·</span>
+  </div>
+</div>
+
+<!-- NAME SUGGESTIONS -->
+<section id="names" class="section names-section">
+  <div class="sec-head reveal">
+    <span class="sec-num">00</span>
+    <h2 class="sec-title">Brand Name — Chosen ✓</h2>
+    <div class="sec-line"></div>
+  </div>
+  <p style="font-size:0.65rem;color:var(--muted);line-height:2;margin-bottom:3rem;max-width:60ch;" class="reveal">
+    Brand locked in: <span style="color:var(--accent-bright);font-weight:500;">Problaq Studio</span>. Agency-level identity that builds on your existing Problaq brand. Live domain: <span style="color:var(--white);">por.problaq.co.za</span>.
+  </p>
+
+  <div class="names-grid">
+    <div class="name-card featured reveal">
+      <div class="name-big">Problaq Studio</div>
+      <div class="name-domain">por.problaq.co.za</div>
+      <div class="name-why">Keeps your existing brand equity and uses the live portfolio subdomain already connected to Problaq.</div>
+      <span class="name-vibe" style="border-color:var(--accent-bright);color:var(--accent-bright);">✓ Your Choice</span>
+    </div>
+    <div class="name-card reveal">
+      <div class="name-big">Problaq Labs</div>
+      <div class="name-domain">problaq.dev · problaqlab.co.za</div>
+      <div class="name-why">Tech-forward, experimental energy. Great if you want to appeal to startups, SaaS, and dev-minded clients who respect the craft. ".dev" domain is clean and professional.</div>
+      <span class="name-vibe">Tech startup</span>
+    </div>
+    <div class="name-card reveal">
+      <div class="name-big">Blaq Forge</div>
+      <div class="name-domain">blaqforge.co.za · blaqforge.dev</div>
+      <div class="name-why">A rebrand that spins off "Blaq" from Problaq. "Forge" = building, crafting, fire — memorable metaphor for web development. Bold, SA-rooted, easy to say and spell.</div>
+      <span class="name-vibe">Bold & memorable</span>
+    </div>
+    <div class="name-card reveal">
+      <div class="name-big">Problaq Works</div>
+      <div class="name-domain">problaqworks.co.za · problaqworks.com</div>
+      <div class="name-why">Straightforward and confident. "Works" implies results, delivery, action. Also hints at a portfolio ("see my works"). Easy for clients to remember and refer.</div>
+      <span class="name-vibe">Results-driven</span>
+    </div>
+    <div class="name-card reveal">
+      <div class="name-big">Blaqdot</div>
+      <div class="name-domain">blaqdot.co.za · blaqdot.dev</div>
+      <div class="name-why">Short, punchy, modern. "Dot" references the internet (dot com era) while "Blaq" anchors it to your identity. Works well as a logo mark too — just a stylized dot.</div>
+      <span class="name-vibe">Minimal & brandable</span>
+    </div>
+    <div class="name-card reveal">
+      <div class="name-big">Problaq Digital</div>
+      <div class="name-domain">problaqdigital.co.za</div>
+      <div class="name-why">Professional and clear. Signals a full-service digital presence. Best for clients in corporate, NGO, or religious sectors — exactly like Cerb.church and GracedLiving.</div>
+      <span class="name-vibe">Corporate friendly</span>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLETED PROJECTS -->
+<section id="work" class="section">
+  <div class="sec-head reveal">
+    <span class="sec-num">01</span>
+    <h2 class="sec-title">Completed Projects</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="projects-grid reveal">
+
+    <!-- cerb.church - featured large -->
+    <div class="proj span8">
+      <div class="proj-num">01</div>
+      <span class="proj-badge live">● Live</span>
+      <div class="proj-tags">
+        <span class="ptag hi">Featured</span>
+        <span class="ptag">Church Platform</span>
+        <span class="ptag">CMS</span>
+        <span class="ptag">WordPress</span>
+      </div>
+      <h3 class="proj-title">Cerb Church</h3>
+      <p class="proj-desc">Full church website with sermon archives, events, and community tools. Built to serve a congregation online with accessibility and warmth at its core.</p>
+      <a href="https://cerb.church" target="_blank" class="proj-url">cerb.church ↗</a>
+    </div>
+
+    <!-- luxesutia -->
+    <div class="proj span4">
+      <div class="proj-num">02</div>
+      <span class="proj-badge live">● Live</span>
+      <div class="proj-tags">
+        <span class="ptag hi">Luxury</span>
+        <span class="ptag">E-Commerce</span>
+        <span class="ptag">SA Brand</span>
+      </div>
+      <h3 class="proj-title">Luxesutia</h3>
+      <p class="proj-desc">Premium South African brand website. Refined, aspirational design built to convert high-end clientele.</p>
+      <a href="https://luxesutia.co.za" target="_blank" class="proj-url">luxesutia.co.za ↗</a>
+    </div>
+
+    <!-- gracedliving -->
+    <div class="proj span6">
+      <div class="proj-num">03</div>
+      <span class="proj-badge live">● Live</span>
+      <div class="proj-tags">
+        <span class="ptag">Events</span>
+        <span class="ptag">Booking</span>
+        <span class="ptag">WordPress</span>
+      </div>
+      <h3 class="proj-title">Graced Living Events</h3>
+      <p class="proj-desc">Event planning &amp; booking platform for a lifestyle brand. Clean layouts with enquiry and portfolio sections.</p>
+      <a href="https://gracedlivingevents.com" target="_blank" class="proj-url">gracedlivingevents.com ↗</a>
+    </div>
+
+    <!-- problaq.co.za -->
+    <div class="proj span6">
+      <div class="proj-num">04</div>
+      <span class="proj-badge live">● Live</span>
+      <div class="proj-tags">
+        <span class="ptag hi">Own Brand</span>
+        <span class="ptag">Corporate</span>
+        <span class="ptag">SA</span>
+      </div>
+      <h3 class="proj-title">Problaq Co.</h3>
+      <p class="proj-desc">Your own company's digital home. Showcasing your brand identity and services to the South African market.</p>
+      <a href="https://problaq.co.za" target="_blank" class="proj-url">problaq.co.za ↗</a>
+    </div>
+
+    <!-- coregame - wide -->
+    <div class="proj span12">
+      <div class="proj-wide-left">
+        <div class="proj-num" style="position:relative;top:auto;left:auto;font-size:2rem;margin-bottom:1rem;">05</div>
+        <span class="proj-badge live" style="position:relative;top:auto;right:auto;display:inline-block;margin-bottom:1rem;">● Live</span>
+        <div class="proj-tags">
+          <span class="ptag hi">Gaming</span>
+          <span class="ptag">Netlify</span>
+          <span class="ptag">Interactive</span>
+          <span class="ptag">JavaScript</span>
+        </div>
+        <h3 class="proj-title">CoreGame</h3>
+        <p class="proj-desc">An interactive browser-based game deployed on Netlify. Fast, lightweight, and built for fun.</p>
+        <a href="https://coregame1.netlify.app" target="_blank" class="proj-url">coregame1.netlify.app ↗</a>
+      </div>
+      <div class="proj-wide-right">
+        <div class="proj-stat">
+          <div class="proj-stat-val">∞</div>
+          <div class="proj-stat-label">Replay value</div>
+        </div>
+        <div class="proj-stat">
+          <div class="proj-stat-val">JS</div>
+          <div class="proj-stat-label">Vanilla</div>
+        </div>
+        <div class="proj-stat">
+          <div class="proj-stat-val">0ms</div>
+          <div class="proj-stat-label">Load lag</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section id="pending" class="section" style="background:var(--surface);border-top:1px solid var(--border);">
+  <div class="sec-head reveal">
+    <span class="sec-num">02</span>
+    <h2 class="sec-title">Now Booking</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="pending-list">
+    <div class="pend reveal">
+      <div class="pend-n">01</div>
+      <div>
+        <div class="pend-title">Portfolio / Business Website</div>
+        <div class="pend-sub">Launch-ready websites for personal brands, churches, SMEs, and service businesses.</div>
+      </div>
+      <div class="pend-chips">
+        <span class="pchip">HTML</span><span class="pchip">CSS</span><span class="pchip">JS</span>
+      </div>
+      <div class="pend-status">Booking open</div>
+    </div>
+    <div class="pend reveal">
+      <div class="pend-n">02</div>
+      <div>
+        <div class="pend-title">Client Web App</div>
+        <div class="pend-sub">Dashboards, booking tools, portals, and custom workflows for growing businesses.</div>
+      </div>
+      <div class="pend-chips">
+        <span class="pchip">React</span><span class="pchip">Node.js</span><span class="pchip">MongoDB</span>
+      </div>
+      <div class="pend-status">Q3 slots</div>
+    </div>
+    <div class="pend reveal">
+      <div class="pend-n">03</div>
+      <div>
+        <div class="pend-title">E-Commerce Store</div>
+        <div class="pend-sub">WooCommerce stores with payments, product setup, and mobile-first checkout.</div>
+      </div>
+      <div class="pend-chips">
+        <span class="pchip">WordPress</span><span class="pchip">WooCommerce</span><span class="pchip">PHP</span>
+      </div>
+      <div class="pend-status">Discovery open</div>
+    </div>
+    <div class="pend reveal">
+      <div class="pend-n">04</div>
+      <div>
+        <div class="pend-title">Mobile-First Redesign</div>
+        <div class="pend-sub">Speed, SEO, layout, and UX upgrades for existing websites that need to convert better.</div>
+      </div>
+      <div class="pend-chips">
+        <span class="pchip">Next.js</span><span class="pchip">Tailwind</span><span class="pchip">Vercel</span>
+      </div>
+      <div class="pend-status">Fast turnaround</div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="section" style="border-top:1px solid var(--border);">
+  <div class="sec-head reveal">
+    <span class="sec-num">03</span>
+    <h2 class="sec-title">Skills &amp; Stack</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="skills-wrap reveal">
+    <div class="skill-cell">
+      <div class="skill-icon">◈</div>
+      <div class="skill-cat">Frontend</div>
+      <div class="skill-pills">
+        <span class="spill">HTML5</span><span class="spill">CSS3</span><span class="spill">JavaScript</span>
+        <span class="spill">React</span><span class="spill">Next.js</span><span class="spill">Tailwind</span>
+        <span class="spill">GSAP</span><span class="spill">Responsive Design</span>
+      </div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-icon">◎</div>
+      <div class="skill-cat">Backend &amp; CMS</div>
+      <div class="skill-pills">
+        <span class="spill">Node.js</span><span class="spill">PHP</span><span class="spill">WordPress</span>
+        <span class="spill">WooCommerce</span><span class="spill">MySQL</span><span class="spill">MongoDB</span>
+        <span class="spill">REST APIs</span>
+      </div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-icon">◉</div>
+      <div class="skill-cat">Tooling &amp; Hosting</div>
+      <div class="skill-pills">
+        <span class="spill">Git</span><span class="spill">Netlify</span><span class="spill">Vercel</span>
+        <span class="spill">cPanel</span><span class="spill">Figma</span><span class="spill">VS Code</span>
+        <span class="spill">Domain Registration</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="section" style="background:var(--surface);border-top:1px solid var(--border);">
+  <div class="sec-head reveal">
+    <span class="sec-num">04</span>
+    <h2 class="sec-title">Packages & Pricing</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--border);" class="reveal">
+
+    <!-- Starter -->
+    <div class="price-card" style="background:var(--surface2);padding:2.5rem;position:relative;overflow:hidden;transition:background 0.3s;" onmouseenter="this.style.background='#e9e4db'" onmouseleave="this.style.background='var(--surface2)'">
+      <div style="font-size:0.5rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;">Starter</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:2.6rem;color:var(--white);line-height:1;">R6,500</div>
+      <div style="font-size:0.5rem;letter-spacing:0.15em;color:var(--muted);margin-bottom:2rem;margin-top:0.3rem;">+ R250/mo hosting</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.75rem;">
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> 1–3 pages (Home, About, Contact)</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Mobile-friendly modern design</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Domain registration — .com, .co.za &amp; more</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Hosting setup</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Basic SEO setup</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Contact form / WhatsApp integration</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Social media integration</li>
+      </ul>
+      <a href="#contact" style="display:inline-block;margin-top:2rem;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent-bright);text-decoration:none;border:1px solid var(--border-bright);padding:0.6rem 1.25rem;transition:all 0.2s;font-family:'JetBrains Mono',monospace;" onmouseenter="this.style.borderColor='var(--accent)';this.style.background='rgba(37,99,235,0.06)'" onmouseleave="this.style.borderColor='var(--border-bright)';this.style.background='transparent'">Get Started →</a>
+    </div>
+
+    <!-- Business -->
+    <div style="background:var(--surface2);padding:2.5rem;position:relative;overflow:hidden;transition:background 0.3s;" onmouseenter="this.style.background='#e9e4db'" onmouseleave="this.style.background='var(--surface2)'">
+      <div style="font-size:0.5rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;">Business</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:2.6rem;color:var(--white);line-height:1;">R9,500</div>
+      <div style="font-size:0.5rem;letter-spacing:0.15em;color:var(--muted);margin-bottom:2rem;margin-top:0.3rem;">+ R300/mo hosting</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.75rem;">
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Up to 6 pages</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Custom branded design</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Speed optimization</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Google Maps integration</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Analytics setup</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Everything in Starter</li>
+      </ul>
+      <a href="#contact" style="display:inline-block;margin-top:2rem;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent-bright);text-decoration:none;border:1px solid var(--border-bright);padding:0.6rem 1.25rem;transition:all 0.2s;font-family:'JetBrains Mono',monospace;" onmouseenter="this.style.borderColor='var(--accent)';this.style.background='rgba(37,99,235,0.06)'" onmouseleave="this.style.borderColor='var(--border-bright)';this.style.background='transparent'">Get Started →</a>
+    </div>
+
+    <!-- Premium -->
+    <div style="background:rgba(37,99,235,0.05);padding:2.5rem;position:relative;overflow:hidden;transition:background 0.3s;border:1px solid rgba(37,99,235,0.25);" onmouseenter="this.style.background='rgba(37,99,235,0.09)'" onmouseleave="this.style.background='rgba(37,99,235,0.05)'">
+      <div style="position:absolute;top:1rem;right:1rem;font-size:0.45rem;letter-spacing:0.2em;text-transform:uppercase;background:var(--accent);color:white;padding:0.25rem 0.7rem;">Most Popular</div>
+      <div style="font-size:0.5rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent-bright);margin-bottom:1.25rem;">Premium</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:2.6rem;color:var(--white);line-height:1;">R14,500<span style="font-size:1rem;color:var(--muted);">+</span></div>
+      <div style="font-size:0.5rem;letter-spacing:0.15em;color:var(--muted);margin-bottom:2rem;margin-top:0.3rem;">+ R350/mo hosting</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.75rem;">
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Up to 10 pages</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Advanced UI/UX design</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Conversion-focused layout</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Blog or portfolio setup</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Advanced SEO structure</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> Performance optimization</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--accent-bright);flex-shrink:0;">✓</span> 2 weeks post-launch support</li>
+      </ul>
+      <a href="#contact" style="display:inline-block;margin-top:2rem;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:white;text-decoration:none;background:var(--accent);padding:0.6rem 1.25rem;transition:all 0.2s;font-family:'JetBrains Mono',monospace;" onmouseenter="this.style.background='var(--accent-bright)';this.style.boxShadow='0 0 20px rgba(37,99,235,0.35)'" onmouseleave="this.style.background='var(--accent)';this.style.boxShadow='none'">Get Started →</a>
+    </div>
+
+    <!-- E-Commerce -->
+    <div style="background:var(--surface2);padding:2.5rem;position:relative;overflow:hidden;transition:background 0.3s;" onmouseenter="this.style.background='#e9e4db'" onmouseleave="this.style.background='var(--surface2)'">
+      <div style="font-size:0.5rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.25rem;">E-Commerce</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:2.6rem;color:var(--white);line-height:1;">R18,000<span style="font-size:1rem;color:var(--muted);">+</span></div>
+      <div style="font-size:0.5rem;letter-spacing:0.15em;color:var(--muted);margin-bottom:2rem;margin-top:0.3rem;">+ R350–R500/mo hosting</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.75rem;">
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--gold);flex-shrink:0;">✓</span> Online store setup</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--gold);flex-shrink:0;">✓</span> Payment gateway integration</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--gold);flex-shrink:0;">✓</span> Product upload (up to 20)</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--gold);flex-shrink:0;">✓</span> Cart & checkout system</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--gold);flex-shrink:0;">✓</span> Mobile optimized</li>
+        <li style="font-size:0.6rem;color:var(--muted);display:flex;gap:0.6rem;line-height:1.5;"><span style="color:var(--gold);flex-shrink:0;">✓</span> Basic SEO</li>
+      </ul>
+      <a href="#contact" style="display:inline-block;margin-top:2rem;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(234,88,12,0.28);padding:0.6rem 1.25rem;transition:all 0.2s;font-family:'JetBrains Mono',monospace;" onmouseenter="this.style.borderColor='var(--gold)';this.style.background='rgba(234,88,12,0.06)'" onmouseleave="this.style.borderColor='rgba(234,88,12,0.28)';this.style.background='transparent'">Get Started →</a>
+    </div>
+
+  </div>
+
+  <!-- Add-ons -->
+  <div style="margin-top:1px;background:var(--border);">
+    <div style="background:var(--surface);padding:2.5rem;" class="reveal">
+      <div style="font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:1.5rem;">Optional Add-Ons</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
+        <span style="font-size:0.58rem;padding:0.5rem 1rem;border:1px solid var(--border-bright);color:var(--muted);">Extra page — <span style="color:var(--white);">R500/page</span></span>
+        <span style="font-size:0.58rem;padding:0.5rem 1rem;border:1px solid var(--border-bright);color:var(--muted);">Logo design — <span style="color:var(--white);">R1,000</span></span>
+        <span style="font-size:0.58rem;padding:0.5rem 1rem;border:1px solid var(--border-bright);color:var(--muted);">Copywriting — <span style="color:var(--white);">R1,500+</span></span>
+        <span style="font-size:0.58rem;padding:0.5rem 1rem;border:1px solid var(--border-bright);color:var(--muted);">SEO monthly — <span style="color:var(--white);">R1,500/month</span></span>
+        <span style="font-size:0.58rem;padding:0.5rem 1rem;border:1px solid var(--border-bright);color:var(--muted);">Maintenance — <span style="color:var(--white);">R500/month</span></span>
+        <span style="font-size:0.58rem;padding:0.5rem 1rem;border:1px solid var(--border-bright);color:var(--muted);">Booking system — <span style="color:var(--white);">R1,000–R2,500</span></span>
+        <span style="font-size:0.58rem;padding:0.5rem 1rem;border:1px solid var(--border-bright);color:var(--muted);">Speed optimization — <span style="color:var(--white);">R1,000</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="contact-orb"></div>
+  <p class="contact-pre">// Let's build something together</p>
+  <h2 class="contact-title">Got a project<br>in <em>mind?</em></h2>
+  <a href="mailto:hello@por.problaq.co.za" class="contact-email">hello@por.problaq.co.za</a>
+  <div class="contact-socials">
+    <a href="https://wa.me/27768569423?text=Hi%20Problaq%20Studio%2C%20I%27d%20like%20to%20discuss%20a%20website%20or%20web%20app%20project.%20Please%20can%20we%20chat%3F" target="_blank" rel="noreferrer" class="c-soc">WhatsApp</a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-l">© 2026 Problaq Studio · South Africa</span>
+  <span class="footer-r">POR.PROBLAQ.CO.ZA</span>
+</footer>
+
+<script>
+  // Cursor
+  const C = document.getElementById('C'), CR = document.getElementById('CR');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function loop(){ C.style.left=mx+'px'; C.style.top=my+'px'; rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1; CR.style.left=rx+'px'; CR.style.top=ry+'px'; requestAnimationFrame(loop); })();
+  document.querySelectorAll('a,button,.proj,.name-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ C.classList.add('big'); CR.classList.add('big'); });
+    el.addEventListener('mouseleave',()=>{ C.classList.remove('big'); CR.classList.remove('big'); });
+  });
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
+  },{threshold:0.08});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{ el.style.transitionDelay=(i%4)*0.08+'s'; obs.observe(el); });
+</script>
+</body>
+</html>
