@@ -189,19 +189,39 @@ export const sendBulkEmails = async (req, res) => {
       })
     }
 
-    // Create transporter for custom SMTP server
+    // Detect if using Gmail
+    const isGmail = senderEmail.toLowerCase().includes('@gmail.com')
+    
+    // Create transporter with smart SMTP configuration
     const transporter = nodemailer.createTransport({
-      host: 'por.problaq.co.za',
-      port: 465,
-      secure: true, // use SSL
+      host: isGmail ? 'smtp.gmail.com' : 'por.problaq.co.za',
+      port: isGmail ? 587 : 465,
+      secure: !isGmail, // true for 465, false for other ports
       auth: {
         user: senderEmail,
         pass: senderPassword
+      },
+      // Connection timeout settings
+      connectionTimeout: 10000, // 10 seconds
+      greetingTimeout: 10000,
+      socketTimeout: 30000,
+      // TLS options
+      tls: {
+        rejectUnauthorized: false // Accept self-signed certificates
       }
     })
 
-    // Verify transporter
-    await transporter.verify()
+    // Verify transporter with timeout
+    try {
+      await Promise.race([
+        transporter.verify(),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('SMTP connection timeout - check your email server settings or try Gmail')), 15000)
+        )
+      ])
+    } catch (verifyError) {
+      throw new Error(`SMTP connection failed: ${verifyError.message}. Try using a Gmail account instead.`)
+    }
 
     // Send emails
     const results = []
